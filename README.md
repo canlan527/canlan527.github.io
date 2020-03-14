@@ -22,6 +22,14 @@
 
 ## 我的一些项目成果
 
+- 云开发音乐小程序：
+  - https://github.com/canlan527/music
+- vue学生管理系统:
+  - https://github.com/canlan527/student_mag_sys
+- vue仿去哪儿webApp:
+  - https://github.com/canlan527/travel
+- node聊天机器人：
+  - https://github.com/canlan527/turingAPI
 <!-- slide vertical=true -->
  
 
@@ -31,10 +39,11 @@
 <!-- slide vertical=true -->
 
 - **JavaScript**, Familiar
-  - **Vue**, Familiar
-  - **Node**, Familiar&Learning
-- **微信小程序**, Familiar
-- **HTML/CSS**, Familiar
+- **Vue**, Familiar
+- **Node**, Familiar&Learning
+- **微信小程序与云开发**, Familiar
+- **Webpack**, Familiar
+- **TypeScript**, Familiar&Learning
 
 <!-- slide vertical=true -->
 
@@ -50,7 +59,7 @@
 ## 我的一些文字
 
 - [基于 Jekyll 搭建个人博客](https://canlan527.github.io/#/)
-- [我的一些作品](https://canlan527.github.io/#/)
+- [我的掘金主页](https://juejin.im/user/5bab57d1f265da0ac55e55c9)
 - [前端修炼的一点感想](https://canlan527.github.io/#/)
 
 
