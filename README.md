@@ -24,14 +24,16 @@
 
 - 云开发音乐小程序：
   - https://github.com/canlan527/music
+  
 - vue学生管理系统:
   - https://github.com/canlan527/student_mag_sys
+
+<!-- slide vertical=true -->
 - vue仿去哪儿webApp:
   - https://github.com/canlan527/travel
+
 - node聊天机器人：
   - https://github.com/canlan527/turingAPI
-<!-- slide vertical=true -->
- 
 
 <!-- slide -->
 ## 我的一些技能
@@ -53,9 +55,6 @@
 - **VSCode**, Familiar
 
 <!-- slide -->
-
-<!-- slide -->
-
 ## 我的一些文字
 
 - [基于 Jekyll 搭建个人博客](https://canlan527.github.io/#/)
