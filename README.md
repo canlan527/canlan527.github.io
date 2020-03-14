@@ -61,4 +61,5 @@
 - [我的掘金主页](https://juejin.im/user/5bab57d1f265da0ac55e55c9)
 - [前端修炼的一点感想](https://canlan527.github.io/#/)
 
-
+<!-- slide vertical=true -->
+## 感谢观看
