@@ -14,7 +14,7 @@ description: | # 头像背后的信息（html格式），<br/>代表换行
     <i class="fas fa-chart-bar"></i>
   </a>
   <iframe
-    src="https://isure.stream.qqmusic.qq.com/C400000kF8hr3pcv6r.m4a?guid=855670505&vkey=96FFD9B2C9FA339EC81B46FC692058191C02AEF8F350D25EC89833265A5A74C57DFB6BE83B3C42465080540BACA431E979656D8B1CF9F662&uin=6397&fromtag=66"
+    src="https://music.163.com/outchain/player?type=2&id=1416387774&auto=0&height=32"
     width=100%
     height=52
     frameborder="no"
