@@ -1,0 +1,340 @@
+# webpack介绍和使用
+webpack是一个前端模块化打包工具，它将根据模块的依赖关系进行静态分析，然后将这些模块按照指定的规则生成对应的静态资源。主要由入口，出口，loader，plugins四个部分。
+
+Webpack 是当下最热门的前端资源模块化管理和打包工具。它可以将许多松散的模块按照依赖和规则打包成符合生产环境部署的前端资源。还可以将按需加载的模块进行代码分隔，等到实际需要的时候再异步加载。通过 loader 的转换，任何形式的资源都可以视作模块，比如 CommonJs 模块、 AMD 模块、 ES6 模块、CSS、图片、 JSON、Coffeescript、 LESS 等。
+
+devDependencies 节点下的模块是我们在开发时需要用的，比如项目中使用的 gulp ，压缩css、js的模块。这些模块在我们的项目部署后是不需要的，所以我们可以使用 -save-dev 的形式安装。官网：https://www.webpackjs.com/concepts/
+
+
+
+## webpack的四个概念
+
+#### 入口entry
+
+新建一个项目文件，在目录下新建webpack.config.js文件，根据这个配置文件里的配置内容进行处理项目有关文件。编写此文件，需要**遵循commonJS的规范**。可以直接执行Git命令webpack来运行，如果是其他的名字，执行webpack--config 打包文件名命令来打包。
+
+**入口起点**(**entry point**)指示 webpack 应该使用哪个模块，来作为构建其内部**依赖图**的开始。++进入入口起点后，webpack 会找出有哪些模块和库是入口起点（直接和间接）依赖的。++
+
+```
+//webpack.config.js中
+module.exports = {
+  entry: './path/to/my/entry/file.js'
+};
+```
+#### 出口output
+`output` 属性告诉 `webpack` 在哪里输出它所创建的 `bundles`，以及如何命名这些文件，默认值为 `./dist`。
+基本上，整个应用程序结构，都会被编译到你指定的输出路径的文件夹中。
+你可以通过在配置中指定一个 `output` 字段，来配置这些处理过程：
+```
+//webpack.config.js中
+const path = require('path');
+
+module.exports = {
+  entry: './path/to/my/entry/file.js',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'my-first-webpack.bundle.js'
+  }
+};
+
+```
+
+在filename中加入[hash:5]表示文件名后会跟上5位哈希值。
+```
+ output:{
+        path:path.resolve(__dirname, 'dist'),
+        filename: '[name][hash:5].bundle.js'
+    },
+```
+#### 配置文件
+Webpack 在执行的时候，除了在命令行传入参数，还可以通过指定的配置文件来执行。默认情况下，会搜索当前目录的 `webpack.config.js` 文件，这个文件是一个` node.js` 模块，返回一个 json 格式的配置信息对象，或者通过 `--config` 选项来指定配置文件。
+#### loader
+处理非JavaScript文件，比如`.less`文件，`.css`文件等。
+本质上，webpack loader 将所有类型的文件，转换为**应用程序的依赖图**（和最终的 bundle）可以直接引用的模块。
+配置两个属性：`text` 和 `use`。
+
+`test` 属性，用于标识出应该被对应的 loader 进行转换的某个或某些文件。
+
+`use` 属性，表示进行转换时，应该使用哪个 loader。
+
+
+```
+//webpack.config.js
+
+const path = require('path');
+
+const config = {
+  output: {
+    filename: 'my-first-webpack.bundle.js'
+  },
+  module: {
+    rules: [
+      { test: /\.less$/, use:'style-loader','css-loader', 'less-loader' }
+      //将less文件解析less，转成css文件，在转成嵌入式样式
+      //use中，解析的顺序是倒着进行的。
+    ]
+  }
+};
+
+module.exports = config;
+```
+> `style-loader`是将`css-loader`打包好的css代码以`<style>`标签的形式插入到html文件中。
+详见:https://juejin.im/post/5a2668996fb9a0450b663f20
+
+#### 插件plugins
+插件可以完成更多 loader 不能完成的功能。
+
+插件的范围包括，从打包优化和压缩，一直到重新定义环境中的变量。插件接口功能极其强大，可以用来处理各种各样的任务。
+
+想要使用一个插件，你只需要 `require()` 它，然后把它添加到 `plugins` 数组中。
+
+多数插件可以通过**选项**(**options**)自定义。
+
+你也可以在一个配置文件中因为不同目的而多次使用同一个插件，这时需要通过使用 `new `操作符来创建它的一个实例。
+```
+//webpack.config.js
+
+const HtmlWebpackPlugin = require('html-webpack-plugin'); // 通过 npm 安装
+const webpack = require('webpack'); // 用于访问内置插件
+
+const config = {
+  module: {
+    rules: [
+      { test: /\.less$/, use: 'style-loader','css-loader','less-loader' }
+    ]
+  },
+  plugins: [
+    new HtmlWebpackPlugin({template: './src/index.html'})
+  ]
+};
+
+module.exports = config;
+```
+使用每个插件前都要npm命令安装在该项目文件夹下。
+
+```
+tree-shaking的插件
+
+uglifyjs-webpack-plugin 压缩JS代码
+
+lodash-es //参考https://www.lodashjs.com/
+
+html-webpack-plugin 将需要的js文件放入dist/index.html中
+
+webpack-deep-scope-plugin //深度JS tree-shaking 安装npm i webpack-deep-scope-plugin 
+//参考 https://www.npmjs.com/package/webpack-deep-scope-plugin
+
+mini-css-extract-plugin 打包成外链式css文件
+
+purifycss-webpack purify-css 通过正则匹配去掉css中多余的样式 //可以到npm官网搜索插件名，查看使用方法
+
+
+//css tree-shaking npm要安装的依赖
+postcss PostCSS 是一个用 JavaScript 转换 CSS 的工具
+postcss-loader 向后兼容css加载器
+autoprefixer 兼容css属性 添加前缀
+cssnano 压缩css文件
+postcss-cssnext 添加cssnext语法支持
+```
+```
+
+//html 的插件
+
+1.html-webpack-plugin //会在dist文件将index.html重新打包
+var HtmlWebpackPlugin = require("html-webpack-plugin");
+
+new HtmlWebpackPlugin({
+            filename: "index.html",//插件生成的名字
+            template: './index.html',//根据本来的index.html生成模板页面
+            minify: {//压缩
+                removeComments:true,//清理注释
+                collapseWhitespace:true,//清理空格
+            }
+        }),
+
+2.clean-webpack-plugin 清理html中的空格
+var CleanWebpackPlugin = require('clean-webpack-plugin');
+ new CleanWebpackPlugin();//清理空格
+ 
+3.html-loader
+用法：
+{
+    test:'/\.html$/',
+    use:[
+        {
+            loader:'html-loader',
+            options:{
+                attrs:['img:src']
+            }
+        }
+    ]
+}
+```
+
+```
+处理图片的插件
+url-loader
+file-loader
+img-loader // https://www.npmjs.com/package/img-loader 根据需要下载不同图片格式的loader 
+例如：
+imagemin-mozjpeg
+imagemin
+用法：
+ {
+    loader:'img-loader',
+    options:{
+        plugins:[
+            require('imagemin-mozjpeg')({
+                quality:[0.3, 0.5]//压缩图片的质量范围0-1
+            }),
+        ]
+    }
+}//压缩图片，目前这个插件出错了。
+```
+#### 开启本地服务器
+
+在项目文件中安装 `npm install webpack-dev-server -g`
+
+再次安装局部环境` npm install webpack-dev-server -D`
+
+执行 `webpack-dev-server`
+
+`webpack-dev-server --open` 在默认浏览器里打开
+
+`webpack-dev-server --open --color `执行完后会有高亮提醒
+```
+//在webpack.config.js中
+module.exports={
+    devServer: {
+        contentBase: './dist',//本地服务器所加载的页面所在的目录
+        port:'8082',
+        inline:true,//实时刷新
+        hot: true
+    }
+}
+```
+```    
+也可以在package.json的scripts中
+
+"scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server":"webpack-dev-server --color --open"
+  }
+命令行输入 npm run server 开启服务器
+```
+
+##### 热更新 
+全称 hot module replace  局部修改正在更新的部分 不需要一直发请求
+是webpack的内置插件
+```
+//在webpack.config.js中
+new Webpack.HotModuleReplacementPlugin()
+ 
+//在index.js中 确认开启 轮询请求js
+ if(module.hot){
+    module.hot.accept()
+}
+```
+### 配置环境变量
+#### 开发环境
+```
+方法一：
+在webpak-dev.config.js中
+module.exports = {
+    mode:'development'
+}
+
+在命令行中输入 webpack --config webpak-dev.config.js
+
+方法二：
+在package.json的scripts中
+
+"scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev":"webpack --mode development --color",
+    "server":"webpack-dev-server --color --open"
+
+  }
+命令行输入 npm run dev
+```
+
+#### 生产环境
+
+```
+方法一：
+在webpak-prod.config.js中
+module.exports = {
+    mode:'production'
+}
+
+在命令行中输入 webpack --config webpak-prod.config.js
+
+方法二：
+在package.json的scripts中
+
+"scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",    "prod":"webpack --mode production --color",
+    "server":"webpack-dev-server --color --open"
+  }
+命令行输入 npm run prod
+```
+> 通过看dist下的main/index.js代码是否压缩来判断是开发环境还是生产环境
+### package.json
+创建一个项目，新建文件夹后，建立`src`目录，创建`index.js`，在根目录`Git bush here`输入命令`npm init -y`,初始化`npm`,`-y`表示一路`yes`。
+
+通过 `npm` 来控制项目及文件, `npm run dev` 打包开发版本， `npm run prod` 打包生产版本。
+
+```
+//package.json
+"scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "run": "webpack",
+    "dev": "webpack --mode development",
+    "prod": "webpack --mode production  "
+  },
+```
+
+通过npm命令安装的工具包 都在 `package.json` 文件中的 `devDependences` 中
+```
+//package.json
+"devDependencies": {
+    "css-loader": "^2.1.1",
+    "lodash-es": "^4.17.11",
+    "style-loader": "^0.23.1",
+    "webpack-deep-scope-plugin": "^1.6.0"
+}
+```
+> 我们从Github上，将带有npm的项目clone下来，在项目的跟目录下面直接 `npm install` ，系统会根据`package.json`里的依赖包`devDependencies`属性，将需要的依赖下载下来。
+
+### package-lock.json
+概括很简单，就是锁定安装时的包的版本号，并且需要上传到git，以保证其他人在npm install时大家的依赖能保证一致。
+
+根据官方文档，这个package-lock.json 是在 `npm install`时候生成一份文件，用以记录当前状态下实际安装的各个npm package的具体来源和版本号。
+
+它有什么用呢？因为npm是一个用于管理package之间依赖关系的管理器，它允许开发者在pacakge.json中间标出自己项目对npm各库包的依赖。你可以选择以如下方式来标明自己所需要库包的版本
+
+这里举个例子：
+
+"dependencies": {
+ "@types/node": "^8.0.33",
+},
+
+这里面的 向上标号^是定义了向后（新）兼容依赖，指如果 types/node的版本是超过8.0.33，并在大版本号（8）上相同，就允许下载最新版本的 types/node库包，例如实际上可能运行npm install时候下载的具体版本是8.0.35。
+
+大多数情况这种向新兼容依赖下载最新库包的时候都没有问题，可是因为npm是开源世界，各库包的版本语义可能并不相同，有的库包开发者并不遵守严格这一原则：相同大版本号的同一个库包，其接口符合兼容要求。这时候用户就很头疼了：在完全相同的一个nodejs的代码库，在不同时间或者不同npm下载源之下，下到的各依赖库包版本可能有所不同，因此其依赖库包行为特征也不同有时候甚至完全不兼容。
+
+因此npm最新的版本就开始提供自动生成package-lock.json功能，为的是让开发者知道只要你保存了源文件，到一个新的机器上、或者新的下载源，只要按照这个package-lock.json所标示的具体版本下载依赖库包，就能确保所有库包与你上次安装的完全一样。
+
+[package-lock.json | 官方文档](https://docs.npmjs.com/files/package-lock.json)
+
+
+
+### semver 语义化版本号变更
+
+`^` 是npm默认的版本符号, 当你使用npm install --save时, npm会自动在package中添加^加上版本号. 例如: npm install --save angular会在package.json中添加"angular": "^1.3.15".这个符号会告诉npm可以安装1.3.15或者一个大于它的版本, 但是要是主版本1下的版本.
+
+`~` 同样被用来做npm得版本控制, 例如~1.3.15, 代表了npm可以安装1.3.15或者更高的版本, 与^的区别在于, ~的版本只能开始于次版本号1.3. 它们的作用域不同. 你可以通过npm config set save-prefix='~'将~设置为默认符号.
+
+`>`符号主要是用来指定可以安装beta版本.
+
+[semver版本号 | 官方文档](https://semver.org/lang/zh-CN/)

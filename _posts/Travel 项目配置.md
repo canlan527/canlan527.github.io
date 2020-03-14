@@ -1,0 +1,364 @@
+# Travel 项目配置
+
+## 项目初始化
+
+清空完了项目多余的文件之后，安装需要的插件
+
+### 初始化样式
+
+引入`reset.css`和`border.css`,初始化页面的样式
+
+我们主要操作`src`下的文件，打开`main.js`项目主入口，引入
+
+```js
+import './assets/styles/reset.css'
+import './assets/styles/border.css'
+```
+
+### 移动端延迟bug
+
+因为移动端页面点击事件有300毫秒的延迟，我们安装`fastclick`包来解决。
+
+```
+npm install fastclick
+```
+
+然后在`main.js`引入并绑定事件
+
+```js
+import fastClick from 'fastclick'
+//绑定事件
+fastClick.attach(document.body)
+```
+
+### CSS预处理器stylus	
+
+```
+npm install stylus
+npm install stylus-loader
+```
+
+### stylus语法
+
+配置stylus预处理语言，加入scope让局部样式不污染全局。
+
+```html
+<style lang="stylus" scoped></style>
+```
+
+普通css
+
+```css
+.header{
+	height:86px
+}
+```
+
+但是stylus不需要大括号
+
+```stylus
+.header
+	height:86px
+```
+
+#### 变量
+
+我们可以在styles文件夹下新建`varibles.styl`，将需要大量重复使用的变量放进去。
+
+```stylus
+$bgColor= #00bcd4 
+```
+
+使用的时候 ，加入变量名即可 `background:$bgColor`
+
+#### 引入
+
+在别的组件style内部引入写好的变量
+
+```js
+@import '../../../assets/styles/varibles.styl'
+//化简路径
+@import '~@/assets/styles/varibles.styl'
+```
+
+#### 配置webpack
+
+在根目录下新建`vue.config.js`文件，加入需要配置的路径
+
+这里将`src/assets/styles`目录，配置成styles
+
+```js
+const path = require('path')
+const resolve = dir => path.join(__dirname, dir)
+
+module.exports = {
+  chainWebpack: config => {
+    config.resolve.alias
+      .set('styles', resolve('src/assets/styles'))
+  }
+}
+
+```
+
+#### 化简路径
+
+配置好了文件的路径后，在需要styles的地方化简路径
+
+```js
+//main.js
+import 'styles/reset.css'
+import 'styles/border.css'
+
+//src/views/home/comonents/Header.vue的style中  
+@import '~styles/varibles.styl' 
+```
+
+
+
+### 移动端适配
+
+通过引入的`reset.css`中，设置html fontSize的值。
+
+> 1rem = html font-size = 50px
+
+这样设计师给的iPhone6的稿子下，`86px`就可以适配成`.86rem`了
+
+### 使用icon-font 
+
+#### 方法一
+
+直接在index.html中引入iconfont在线链接
+
+```js
+https://at.alicdn.com/t/font_1588327_7gm8oxvc6v.css
+```
+
+在需要插入iconfont的组件里 将对应的类名或者Unicode编码名加进去
+
+```html
+<div class="header-left iconfont iconfanhui"></div>
+<div class="header-input iconfont iconsousuo">输入城市/景点/游玩主题</div>
+```
+
+#### 方法二
+
+[https://hehuiyun.github.io/2018/01/22/%E5%9C%A8vue%E9%A1%B9%E7%9B%AE%E4%B8%AD%E5%BC%95%E5%85%A5iconfont%E5%AD%97%E4%BD%93%E5%9B%BE%E6%A0%87/](https://hehuiyun.github.io/2018/01/22/在vue项目中引入iconfont字体图标/)
+
+将手机好的图标都加入项目之后，回到项目里。
+
+1. 点击“下载至本地”，解压压缩包。
+2. 将后缀`.eot,.svg,.ttf,.woff` 的四个文件，放到项目对应目录中，比如assets/styles/iconfont里
+3. 将` iconfont.css`文件引入到`main.js`里 -> `` `import  './assets/styles/iconfont.css'`
+4. 打开`iconfont.css`,把文件里面的src的路径改成相对路径
+5. 在对应的组件里引入iconfont类名，或者Unicode名。
+
+## git分支
+
+首先在码云上创建一个分支，方法如下：
+
+- 一个分支->新建分支->"index-swiper"->提交
+
+这样就在码云上新建了一个名为"index-swiper"的分支了。
+
+我们还需要将分支拉到本地项目中
+
+从根目录中打开git，执行
+
+```js
+git pull //拉取线上代码
+git checkout index-swiper //切换到分支下
+git status //查看当前是否在分支下
+```
+
+然后运行项目
+
+```
+npm run serve
+```
+
+## 分支中写项目-swiper
+
+### 使用swiper
+
+对于首页的轮播图，我们使用`vue-awesome-swiper`插件
+
+> https://github.com/surmon-china/vue-awesome-swiper
+
+安装插件
+
+```
+npm install vue-awesome-swiper --save
+```
+
+安装老旧的插件，指定版本号
+
+```
+npm install vue-awesome-swiper@2.6.7 --save
+```
+
+之后在项目的main.js里引入插件
+
+```js
+import Vue from 'vue'
+import VueAwesomeSwiper from 'vue-awesome-swiper'
+
+// require styles
+import 'swiper/dist/css/swiper.css'
+
+Vue.use(VueAwesomeSwiper, /* { default global options } */)
+```
+
+#### 解决抖动
+
+在轮播图下，随便写点什么，把调试工具的网络调到“fast3G”上，清除缓存，会看到下面的字会有抖动的情况。
+
+解决这个Bug，我们需要在swiper外层，套一个div，并给div设置如下样式
+
+```stylus
+overflow:hidden
+width:100%
+height 0
+padding-bottom:26.7%
+```
+
+其中，padding-bottom的值，是图片的高/宽的大致的比例。（200 / 750）
+
+我们也可以直接这么写,但是怕有些浏览器的兼容不行
+
+```stylus
+width:300%
+height:26.7vw 
+```
+
+#### 调整轮播点
+
+```html
+<template>
+  <div class="wrapper">
+    <swiper :options="swiperOption">
+      <swiper-slide v-for="(slide, index) in swiperSlides" :key="index">
+        <img class="swiperImg" :src="slide.url" alt="">
+      </swiper-slide>
+      <div class="swiper-pagination" slot="pagination"></div>
+    </swiper>
+  </div>
+</template>
+```
+
+需要按照插件文档中异步的方式来使用，绑定src，传入需要的url网址。
+
+```js
+ data (){
+    return {
+      swiperOption :{
+        pagination: {
+            el: '.swiper-pagination'
+        }
+      },
+      swiperSlides:[{
+        url:'xxxx'
+      },{
+        url:'xxxxx'
+      }
+      ]
+    }
+  },
+```
+
+#### 穿透样式
+
+**使用**
+
+`.wrapper >>> .swiper-slide-active`
+
+在`wrapper`下的所有带有`.swiper-slide-active`的标签的样式都穿透到全局，不受`scope`的限制。
+
+## 合并分支
+
+我们先把写完的分支的内容提交到远程分支仓库
+
+```js
+git add .
+git commmit -m "changeSwiper"
+git push
+```
+
+然后切换到主干`master`下,合并分支
+
+```js
+git checkout master
+//合并merge
+git merge origin/index-swiper
+//最后push
+git push
+```
+
+这样，`master`下是我们项目最新的代码，而分支`index-swiper`是我们单个的功能开发。
+
+## 开发分支功能--主页icon
+
+#### 分页算法
+
+将一个一维数组变成二维数组
+
+```js
+computed: {
+    pages () {
+      const pages=[] //创建一个空数组
+      this.iconList.forEach((item,index)=>{ //循环iconlist
+        const page = Math.floor(index / 8)//定义page页码 0还是1
+        if(!pages[page]){//如果没有这个数组就创建一个数组
+          pages[page] = []
+        }
+        pages[page].push(item)//存进遍历的icon
+      })
+      return pages//返回新的数组
+    }
+  }
+```
+
+标签的改动，对`swiper-slide`加入`v-for`遍历，div子组件循环上级的item--page
+
+```
+   <swiper>
+      <swiper-slide v-for="(page, index) in pages" :key="index">
+        <div class="icon"  v-for="item in page" :key="item.id">
+          <div class="icon-img">
+            <img class="img" :src="item.iconUrl" alt="">
+          </div>
+          <p class="icon-title">{{item.title}}</p>
+        </div>
+        </swiper-slide>
+    </swiper>
+```
+
+#### 标题的展示样式
+
+在style中新建`mixin.styl`
+
+```stylus
+ellipsis()
+  overflow:hidden
+  white-space: nowrap
+  text-overflow: ellipsis
+```
+
+在`icons.vue`中，在需要的地方直接执行此方法
+
+```stylus
+  @import '~styles/mixin.styl'
+  .icon-title
+      position:absolute
+      ...
+      ellipsis() /*这里使用*/
+      
+```
+
+### 删掉eslint--多余配置
+
+```js
+no-console": require("./rules/no-console"),
+```
+
+## 路由配置
+
