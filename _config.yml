@@ -15,7 +15,7 @@ description: | # 头像背后的信息（html格式），<br/>代表换行
   </a>
   <iframe
     src="https://isure.stream.qqmusic.qq.com/C400000kF8hr3pcv6r.m4a?guid=855670505&vkey=96FFD9B2C9FA339EC81B46FC692058191C02AEF8F350D25EC89833265A5A74C57DFB6BE83B3C42465080540BACA431E979656D8B1CF9F662&uin=6397&fromtag=66"
-    width=100%
+    width=100px
     height=20
     frameborder="no"
     border="0"
